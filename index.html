@@ -164,8 +164,8 @@ body{
       <span id="save-msg">Saved &#x2713;</span>
     </div>
   </div>
-  <div style="text-align:center;padding:16px 0 4px;font-size:11px;color:#555">
-    <a href="https://github.com/litai-solutions" style="color:#555;text-decoration:none">made by litai</a>
+  <div style="text-align:center;padding:16px 0 4px;font-size:13px;color:#bbb">
+    <a href="https://github.com/litai-solutions" style="color:#bbb;text-decoration:none">made by litai</a>
   </div>
 </div>
 
@@ -336,15 +336,17 @@ body{
     '🇫🇷 for FR, 🇪🇸 for ES, 🇮🇹 for IT, 🇵🇱 for PL, 🇵🇹 for PT, 🇳🇱 for NL, 🇷🇺 forbidden) ' +
     'followed by the language code on a single header line, exactly once per language. ' +
     'Do NOT repeat the header line for additional meanings.\n\n' +
-    'Template:\n' +
+    'Template (replace placeholders with real content; do NOT include the words "short definition" or any labels):\n' +
     '🇩🇪 DE\n' +
-    'translation_word_1\n' +
-    '- short definition: "example sentence."\n' +
-    'translation_word_2\n' +
-    '- short definition: "example sentence."\n\n' +
+    '<translated_word_1>\n' +
+    '- <one short example sentence using that word>\n' +
+    '<translated_word_2>\n' +
+    '- <one short example sentence using that word>\n\n' +
     '🇺🇦 UK\n' +
-    'translation_word_1\n' +
-    '- short definition: "example sentence."\n\n' +
+    '<translated_word_1>\n' +
+    '- <one short example sentence using that word>\n\n' +
+    'After each translation word, put a single dash followed by a short example sentence in quotes. ' +
+    'Do NOT prefix the example with any label like "definition", "example", "usage" — just the dash and the sentence.\n' +
     'For verbs with multiple distinct sub-meanings, list each sub-meaning under the same ' +
     'language header. For nouns and other words, usually one translation is enough.\n\n' +
     'No preamble, no explanation, no model name, no extra text. Just the formatted translations.\n' +
