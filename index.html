@@ -166,7 +166,10 @@ body{
     </div>
   </div>
   <div style="text-align:center;padding:16px 0 4px;font-size:13px;color:#bbb">
-    <a href="https://github.com/litai-solutions" style="color:#bbb;text-decoration:none">made by litai</a>
+    <a href="https://github.com/litai-solutions" style="color:#bbb;text-decoration:none;display:inline-flex;align-items:center;gap:8px">
+      <span>made by litai</span>
+      <img src="litai-logo.png" alt="LitAI" style="height:36px;width:auto">
+    </a>
   </div>
 </div>
 
@@ -337,17 +340,18 @@ body{
     '🇫🇷 for FR, 🇪🇸 for ES, 🇮🇹 for IT, 🇵🇱 for PL, 🇵🇹 for PT, 🇳🇱 for NL, 🇷🇺 forbidden) ' +
     'followed by the language code on a single header line, exactly once per language. ' +
     'Do NOT repeat the header line for additional meanings.\n\n' +
-    'Template (replace placeholders with real content; wrap each translated word in **bold** markdown; do NOT include the words "short definition" or any labels):\n' +
+    'Template (replace placeholders with real content; wrap each translated word in **bold** markdown; ' +
+    'indent the example sentence with three spaces; no dashes, no labels):\n' +
     '🇩🇪 DE\n' +
     '**translated_word_1**\n' +
-    '- <one short example sentence using that word>\n' +
+    '   <one short example sentence using that word>\n' +
     '**translated_word_2**\n' +
-    '- <one short example sentence using that word>\n\n' +
+    '   <one short example sentence using that word>\n\n' +
     '🇺🇦 UK\n' +
     '**translated_word_1**\n' +
-    '- <one short example sentence using that word>\n\n' +
-    'After each translation word, put a single dash followed by a short example sentence in quotes. ' +
-    'Do NOT prefix the example with any label like "definition", "example", "usage" — just the dash and the sentence.\n' +
+    '   <one short example sentence using that word>\n\n' +
+    'After each translation word, put the example on a new line indented with three spaces (no dash, ' +
+    'no bullet, no label like "definition" or "example"). Wrap example sentences in straight double quotes.\n' +
     'For verbs with multiple distinct sub-meanings, list each sub-meaning under the same ' +
     'language header. For nouns and other words, usually one translation is enough.\n\n' +
     'No preamble, no explanation, no model name, no extra text. Just the formatted translations.\n' +
