@@ -164,6 +164,17 @@ body{
       <button id="save-btn">Save</button>
       <span id="save-msg">Saved &#x2713;</span>
     </div>
+
+    <h3>Backup</h3>
+    <div style="font-size:12px;color:#888;margin-bottom:8px">
+      Your settings (including API keys) live only in this browser. Export a backup file so you can restore them after clearing browser data or moving to another device.
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button id="export-btn" style="padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px;background:#0f3460;color:#e0e0e0">Export config</button>
+      <button id="import-btn" style="padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:14px;background:#0f3460;color:#e0e0e0">Import config</button>
+      <input type="file" id="import-file" accept="application/json" style="display:none">
+      <span id="backup-msg" style="font-size:13px;color:#4ecca3;align-self:center;display:none"></span>
+    </div>
   </div>
   <div style="text-align:center;padding:20px 0 4px;font-size:16px;color:#ddd">
     <a href="https://github.com/litai-solutions" style="color:#ddd;text-decoration:none;display:inline-flex;align-items:center;gap:14px">
@@ -183,13 +194,13 @@ body{
     openaiKey: '',
     translation: { source: 'English', targets: 'German, Ukrainian' },
     commands: [
-      { prefix: 'e', full_prefix: 'explain', label: 'Explain',
+      { prefix: 'e', full_prefix: 'explain', label: 'Explain', aliases: ['п'],
         prompt: 'Explain the following concept in 3-6 sentences. Be clear and concise. No preamble. Use short paragraphs or bullets for readability. Important: Never answer in Russian. If a Slavic language is needed, use Ukrainian only.',
         deletable: false },
-      { prefix: 'c', full_prefix: 'command', label: 'Command',
+      { prefix: 'c', full_prefix: 'command', label: 'Command', aliases: ['к'],
         prompt: 'Give the bash or python command for this task. No preamble, no explanation, no comments. Just the command.',
         deletable: false },
-      { prefix: 'q', full_prefix: 'question', label: 'Question',
+      { prefix: 'q', full_prefix: 'question', label: 'Question', aliases: ['з'],
         prompt: 'Answer this question directly and concisely. No preamble, no hedging. Just the answer. Important: Never answer in Russian. If a Slavic language is needed, use Ukrainian only.',
         deletable: false },
     ],
@@ -330,6 +341,57 @@ body{
     setTimeout(() => saveMsg.style.display = 'none', 2000);
   });
 
+  // --- Export / Import config ---
+  const exportBtn = document.getElementById('export-btn');
+  const importBtn = document.getElementById('import-btn');
+  const importFile = document.getElementById('import-file');
+  const backupMsg = document.getElementById('backup-msg');
+
+  function showBackupMsg(text, color) {
+    backupMsg.textContent = text;
+    backupMsg.style.color = color || '#4ecca3';
+    backupMsg.style.display = 'inline';
+    setTimeout(() => backupMsg.style.display = 'none', 3000);
+  }
+
+  exportBtn.addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(cfg, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const ts = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `trivi-config-${ts}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showBackupMsg('Exported ✓');
+  });
+
+  importBtn.addEventListener('click', () => importFile.click());
+
+  importFile.addEventListener('change', () => {
+    const file = importFile.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(String(reader.result));
+        if (!imported || typeof imported !== 'object') throw new Error('Invalid file');
+        cfg = { ...DEFAULT_CONFIG, ...imported };
+        saveConfig(cfg);
+        applyConfig();
+        setupBanner.style.display = 'none';
+        showBackupMsg('Imported ✓');
+      } catch (e) {
+        showBackupMsg('Import failed: ' + (e.message || 'invalid file'), '#e94560');
+      } finally {
+        importFile.value = '';
+      }
+    };
+    reader.readAsText(file);
+  });
+
   // --- LLM API calls (direct from browser) ---
 
   const GEMINI_MODEL = 'gemini-3.1-flash-lite-preview';
@@ -455,15 +517,21 @@ body{
 
   // --- Input parsing ---
   function parseInput(text) {
-    const lower = normalizeCyrillic(text.toLowerCase());
+    const lower = text.toLowerCase();
+    const lowerNorm = normalizeCyrillic(lower);
     for (const cmd of (cfg.commands || [])) {
-      const prefixShort = cmd.prefix.toLowerCase() + ' ';
-      const prefixFull = cmd.full_prefix.toLowerCase() + ' ';
-      if (lower.startsWith(prefixShort)) {
-        return { mode: cmd.label, prompt: cmd.prompt, input: text.slice(prefixShort.length) };
-      }
-      if (lower.startsWith(prefixFull)) {
-        return { mode: cmd.label, prompt: cmd.prompt, input: text.slice(prefixFull.length) };
+      const candidates = [cmd.prefix, cmd.full_prefix, ...(cmd.aliases || [])];
+      for (const raw of candidates) {
+        if (!raw) continue;
+        const c = String(raw).toLowerCase() + ' ';
+        // Match against the original (handles native Cyrillic aliases like "з ")
+        if (lower.startsWith(c)) {
+          return { mode: cmd.label, prompt: cmd.prompt, input: text.slice(c.length) };
+        }
+        // Match against the homoglyph-normalized form (handles "е "→"e ", "с "→"c ")
+        if (lowerNorm.startsWith(c)) {
+          return { mode: cmd.label, prompt: cmd.prompt, input: text.slice(c.length) };
+        }
       }
     }
     return { mode: 'Translation', prompt: '', input: text };
