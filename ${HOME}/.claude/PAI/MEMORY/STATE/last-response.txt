@@ -1,0 +1,8 @@
+═══ PAI ═══════════════════════
+🔧 CHANGE: Wrote pickup note at `~/.claude/PAI/MEMORY/PROJECT/litai-trivi/PICKUP-2026-05-07.md` capturing both decisions, file paths, streaming-test-version implementation plan, and the still-unrotated PATs reminder.
+✅ VERIFY: File created, contains decisions (thinking=0 ship, streaming=test-toggle), endpoint URLs, parsing notes, and "start here" steps.
+📋 SUMMARY:
+- Decisions captured: #1 ship, #2 build behind Settings flag for A/B feel-test
+- File paths and endpoint specs recorded so next session jumps straight to coding
+- PAT rotation still flagged as outstanding
+🗣️ litus: Pickup saved at `MEMORY/PROJECT/litai-trivi/PICKUP-2026-05-07.md` — restart whenever you're ready.
